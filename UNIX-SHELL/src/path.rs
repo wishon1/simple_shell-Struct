@@ -35,8 +35,9 @@ impl PathResolver {
         }
 
         self.dirs
-            .ietr()
+            .iter()
             .map(|dir| format!("{dir}/{name}"))
+            .find(|p| Self::is_executable(p))
     }
 
     /// Returns `true` when `path` exits and has at least one executable bit.
@@ -44,7 +45,7 @@ impl PathResolver {
         use std::os::unix::fs::permissionExt;
         path::new(path)
             .metadata()
-            .map(|m| m.permission().mode())
+            .map(|m| m.permission().mode() & 0o111 != 0)
             .unwrap_or_(false)
     }
 }

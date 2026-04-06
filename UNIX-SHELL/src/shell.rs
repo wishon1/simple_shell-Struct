@@ -1,11 +1,23 @@
 use std::io::(Self)
 use crate::error::Error;
-use crate::path::PathResolver;s
+use crate::path::PathResolver;
 
+/// The shell's read-eval-print loop and all state it needs to run it.
+///
+/// Constructed once in `main`. Owns the [`PathResolver`] so `PATH` is
+/// read from the environment exactly once for the lifetime of the shell.
+
+pub struct Shell {
+    /// pre-built for reuse for every external lookup
+    resolver: PathResolver,
+    /// `true` when stdout is an interactive terminal; supresses promt otherwise
+    interactive_mode: bool,
+}
 impl Shell {
     /// Construct a [`Shell`], read the `PATH` and detect the terminal
     pub fn new() -> {
         Self {
+            resolver: PathResolver::new(),
             interactive_mode: io::stdout().is_terminal()
         }
     }
